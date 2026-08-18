@@ -252,11 +252,14 @@ img {
   );
 }
 
+/* 抬头与姓名的字号比约 0.52，是个舒服的层级差：
+ * 再小就沦为附注，再大就和姓名抢主角。
+ * 字距随字号放大而收紧 —— 大字本就不需要那么疏的排布。 */
 .cover .kicker {
   font-family: var(--serif-cn);
-  font-size: 13px;
-  letter-spacing: 0.5em;
-  text-indent: 0.5em;
+  font-size: clamp(15px, 4.4vw, 19px);
+  letter-spacing: 0.4em;
+  text-indent: 0.4em;
   color: var(--gold);
 }
 
@@ -267,7 +270,7 @@ img {
   line-height: 1.32;
   letter-spacing: 0.16em;
   text-indent: 0.16em;
-  margin: 14px 0 0;
+  margin: 17px 0 0;
   color: var(--ink);
 }
 
@@ -966,10 +969,10 @@ img {
   }
   .cover .names {
     font-size: 26px;
-    margin-top: 10px;
+    margin-top: 12px;
   }
   .cover .rule {
-    margin: 11px auto;
+    margin: 9px auto;
   }
   .cover .date {
     font-size: 13px;
@@ -979,9 +982,9 @@ img {
     padding-bottom: calc(28px + max(8px, env(safe-area-inset-bottom)));
   }
   .cover .kicker {
-    font-size: 11.5px;
-    letter-spacing: 0.42em;
-    text-indent: 0.42em;
+    font-size: 14.5px;
+    letter-spacing: 0.34em;
+    text-indent: 0.34em;
   }
   /* 邀请函这一屏内容最多，矮屏上必须压紧行距才装得下 */
   .invite-body {
