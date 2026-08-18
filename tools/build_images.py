@@ -35,8 +35,8 @@ WEBP_Q_SM = 72
 LQIP_EDGE = 24
 
 # 分享卡片用哪张图，以及裁剪时以哪个点为中心（0~1 的相对坐标）
-SHARE_SRC = "0.jpg"
-SHARE_FOCUS = (0.62, 0.38)
+SHARE_SRC = "0.2.jpg"
+SHARE_FOCUS = (0.5, 0.42)
 SHARE_SIZE = 800
 
 
