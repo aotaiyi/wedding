@@ -573,16 +573,17 @@ img {
   text-shadow: 0 2px 20px rgba(0, 0, 0, 0.35);
 }
 
+/* 四条副题一律单行显示。最长的是第三章（24 字，13px/0.1em 时需要 343px），
+ * 按它在 360px 屏上排下来反推：字号随屏宽联动，字距收到 0.04em。
+ * 320px 的老机型仍会换行 —— 再压就小到看不清了，那时由 text-wrap:balance
+ * 断在逗号处兜底。 */
 .chapter-sub {
-  font-size: 13px;
-  /* 0.1em 而非 0.16em：收紧后副题刚好能排成一行，
-   * 既不出现孤字也不从词中间断开；窄屏真需要换行时由 text-wrap:balance 兜底。 */
-  letter-spacing: 0.1em;
-  text-indent: 0.1em;
+  font-size: clamp(11.5px, 3.35vw, 14px);
+  letter-spacing: 0.04em;
+  text-indent: 0.04em;
   opacity: 0.88;
-  /* 25em 而非 24em：第二章副题的自然单行宽度只差 3px，
-   * 卡住它的是这个上限而不是屏幕宽度，放宽一档即可一行排下。 */
-  max-width: 25em;
+  /* 不设宽度上限：既然目标是单行，让容器宽度说了算 */
+  max-width: none;
   /* 均衡两行长度，避免末行只剩一个词（如「Kolen。」「余生。」孤悬）。
    * 不支持的浏览器退回普通断行，无副作用。 */
   text-wrap: balance;
