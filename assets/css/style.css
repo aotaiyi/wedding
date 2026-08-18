@@ -401,7 +401,7 @@ img {
   align-items: center;
   gap: 0.3em;
   font-family: var(--serif-cn);
-  font-size: clamp(23px, 6.8vw, 28px);
+  font-size: clamp(17px, min(6.8vw, 3.15vh), 28px);
   font-weight: 400;
   line-height: 1;
   color: var(--cinnabar);
@@ -414,12 +414,24 @@ img {
 
 .invite-body {
   font-family: var(--serif-cn);
-  font-size: clamp(16px, 4.7vw, 19px);
-  line-height: 2.2;
+  font-size: clamp(13px, min(4.7vw, 2.25vh), 19px);
+  line-height: 2.15;
   text-align: center;
   color: #3a342e;
   max-width: 23em;
   margin: 0 auto;
+}
+
+/* 段间距用 margin 控制，而不是靠 <br><br>。
+ * 空行会占满一整个行高（19px × 2.2 ≈ 42px），三处段落就白吃掉 75px，
+ * 这一屏本来就装不下。 */
+.invite-body p + p {
+  margin-top: 0.85em;
+}
+
+.invite-body .salute {
+  margin-top: 1.05em;
+  letter-spacing: 0.12em;
 }
 
 /* 场地、日期这类关键信息：朱砂 + 细下划线 */
@@ -455,8 +467,8 @@ img {
   justify-content: center;
   flex-wrap: wrap;
   gap: 0 8px;
-  font-size: clamp(15px, 4.3vw, 17px);
-  line-height: 1.9;
+  font-size: clamp(12.5px, min(4.3vw, 2vh), 17px);
+  line-height: 1.85;
   color: #3a342e;
 }
 
@@ -483,7 +495,7 @@ img {
 
 .invite-detail .row-sub {
   margin-top: 2px;
-  font-size: clamp(12px, 3.5vw, 13.5px);
+  font-size: clamp(11px, min(3.5vw, 1.6vh), 13.5px);
   letter-spacing: 0.14em;
   color: var(--muted);
 }
@@ -671,72 +683,14 @@ img {
   padding-bottom: 2vh;
 }
 
-/* ── 婚礼信息 ───────────────────────────────────────── */
-
-.info {
-  text-align: center;
-}
-
-.info .big-date {
-  font-family: var(--serif-en);
-  font-size: clamp(44px, 15vw, 68px);
-  line-height: 1;
-  letter-spacing: 0.04em;
-  color: var(--cinnabar);
-}
-
-.info .big-date sup {
-  font-size: 0.3em;
-  vertical-align: super;
-  letter-spacing: 0.1em;
-}
-
-.info .weekday {
-  font-family: var(--serif-cn);
-  font-size: 13px;
-  letter-spacing: 0.36em;
-  text-indent: 0.36em;
-  color: var(--muted);
-  margin-top: 12px;
-}
-
-.info dl {
-  margin: 30px auto 0;
-  max-width: 24em;
-  text-align: left;
-}
-
-.info dt {
-  font-family: var(--serif-cn);
-  font-size: 11px;
-  letter-spacing: 0.3em;
-  text-indent: 0.3em;
-  color: var(--gold);
-  margin-top: 18px;
-}
-
-.info dd {
-  font-size: 15px;
-  color: #3a342e;
-  padding-top: 4px;
-  border-bottom: 1px solid rgba(28, 25, 23, 0.1);
-  padding-bottom: 12px;
-}
-
-.info dd small {
-  display: block;
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 3px;
-  line-height: 1.6;
-}
+/* ── 操作按钮（邀请函页底部）─────────────────────── */
 
 .actions {
   display: flex;
-  gap: 10px;
+  gap: 9px;
   justify-content: center;
   flex-wrap: wrap;
-  margin-top: 26px;
+  margin-top: 18px;
 }
 
 .btn {
@@ -986,10 +940,19 @@ img {
     letter-spacing: 0.34em;
     text-indent: 0.34em;
   }
-  /* 邀请函这一屏内容最多，矮屏上必须压紧行距才装得下 */
+  /* 邀请函这一屏内容最多（正文 + 时间块 + 三个按钮），矮屏上必须压紧。
+   * 真机是宋体，字体度量与测试环境的黑体不同，所以要留足余量而非刚好装下。 */
   .invite-body {
-    font-size: 15.5px;
-    line-height: 1.78;
+    line-height: 1.7;
+  }
+  .invite-body p + p {
+    margin-top: 0.7em;
+  }
+  .invite-body .salute {
+    margin-top: 0.85em;
+  }
+  .actions {
+    margin-top: 14px;
   }
   .vtitle {
     font-size: 21px;
@@ -1015,11 +978,11 @@ img {
 }
 
 @media (max-height: 640px) {
-  .invite-body { font-size: 15px; line-height: 1.8; }
-  .vtitle { font-size: 20px; margin-bottom: 12px; }
+  .invite-body { line-height: 1.62; }
+  .vtitle { margin-bottom: 10px; }
+  .scene { padding-left: 20px; padding-right: 20px; }
+  .btn { padding: 9px 13px; font-size: 12px; }
   .invite-detail { margin-top: 11px; padding: 9px 0; }
   .strip button { width: 64px; height: 85px; }
-  .info dt { margin-top: 12px; }
-  .info dd { padding-bottom: 9px; }
   .outro { padding-top: 13vh; }
 }

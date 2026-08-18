@@ -34,8 +34,8 @@ WEDDING = {
     "venue": "朔州市朔城区艺龙万国酒店 · 奥斯卡厅",
     "ceremony": "11:50",  # 开礼
     "banquet": "12:18",  # 开席
-    "ximen_time": "九月十一日 晚 19:00",  # 开喜门
-    "ximen_place": "艺龙万国酒店 · 奥斯卡厅",
+    # 开喜门。地点与婚礼同址，页面上不再重复一遍场地名
+    "ximen_time": "九月十一日 晚 19:00",
     "address": "山西省朔州市朔城区（详细街道地址待填）",
     # 用关键词搜索而不是写死经纬度：酒店的精确坐标我无从得知，
     # 编一个坐标会让导航指到错误位置，比留占位更糟。
@@ -216,14 +216,21 @@ def main():
     <div class="frame"></div>
     <h2 class="vtitle rise"><span>邀</span><span>请</span><span>函</span></h2>
     <div class="invite-body rise">
-      谨定于<br>
-      <strong>{WEDDING['date_cn']}</strong><br>
-      {WEDDING['lunar']}　{WEDDING['weekday']}<br><br>
-      <strong>{WEDDING['hall']}</strong><br>
-      <strong>{WEDDING['room']}</strong><br><br>
-      为 <b>{COUPLE['groom']}</b> 先生<br>
-      与 <b>{COUPLE['bride']}</b> 女士<br>
-      举行结婚典礼
+      <p>
+        谨定于<br>
+        <strong>{WEDDING['date_cn']}</strong><br>
+        {WEDDING['lunar']}　{WEDDING['weekday']}
+      </p>
+      <p>
+        <strong>{WEDDING['hall']}</strong><br>
+        <strong>{WEDDING['room']}</strong>
+      </p>
+      <p>
+        为 <b>{COUPLE['groom']}</b> 先生<br>
+        与 <b>{COUPLE['bride']}</b> 女士<br>
+        举行结婚典礼
+      </p>
+      <p class="salute">敬备喜筵　恭请光临</p>
     </div>
     <div class="invite-detail rise">
       <p class="row">
@@ -234,9 +241,13 @@ def main():
       <p class="row">
         <span class="lab">喜门</span><b>{WEDDING['ximen_time']}</b>
       </p>
-      <p class="row-sub">{WEDDING['ximen_place']}</p>
+      <p class="row-sub">{WEDDING['address']}</p>
     </div>
-    <p class="signature rise">敬备喜筵　恭请光临</p>
+    <div class="actions rise">
+      <a class="btn solid" href="{WEDDING['amap']}" target="_blank" rel="noopener">地图导航</a>
+      <button class="btn" type="button" data-copy="{WEDDING['venue']}　{WEDDING['address']}">复制地址</button>
+      <a class="btn" href="tel:{WEDDING['phone']}">联系我们</a>
+    </div>
   </section>
 """
     )
@@ -279,35 +290,13 @@ def main():
 """
         )
 
-    # ── 婚礼信息 ──
-    out.append(
-        f"""
-  <!-- ═══ 7. 婚礼信息 ═══ 【改这里】时间、地址、导航链接、电话 -->
-  <section class="scene paper info">
-    <div class="frame"></div>
-    <p class="big-date rise">{WEDDING['date_dot']}</p>
-    <p class="weekday rise">{WEDDING['weekday']}　{WEDDING['lunar']}</p>
-    <dl class="rise">
-      <dt>开礼 / 开席</dt>
-      <dd>{WEDDING['ceremony']} 开礼　{WEDDING['banquet']} 开席</dd>
-      <dt>喜门</dt>
-      <dd>{WEDDING['ximen_time']}<small>{WEDDING['ximen_place']}</small></dd>
-      <dt>地点</dt>
-      <dd>{WEDDING['venue']}<small>{WEDDING['address']}</small></dd>
-    </dl>
-    <div class="actions rise">
-      <a class="btn solid" href="{WEDDING['amap']}" target="_blank" rel="noopener">地图导航</a>
-      <button class="btn" type="button" data-copy="{WEDDING['address']}">复制地址</button>
-      <a class="btn" href="tel:{WEDDING['phone']}">联系我们</a>
-    </div>
-  </section>
-"""
-    )
-
     # ── 结尾 ──
+    # 原本独立的「婚礼信息」一屏已并入第 2 屏邀请函：
+    # 日期、农历、星期、开礼、开席、喜门、场地在两屏之间完全重复，
+    # 真正独有的只是详细地址和三个操作按钮。
     out.append(
         f"""
-  <!-- ═══ 8. 结尾 ═══ -->
+  <!-- ═══ 7. 结尾 ═══ -->
   <section class="scene outro">
 {bg(OUTRO['img'], OUTRO['focus'], lq[OUTRO['img']]['lqip'])}
     <p class="word rise">敬候光临</p>
@@ -324,7 +313,7 @@ def main():
         f.write(html)
 
     n = sum(len(c["photos"]) for c in CHAPTERS)
-    print(f"index.html 已生成：{len(CHAPTERS) + 4} 屏，{n} 张照片，{len(html) / 1024:.0f} KB")
+    print(f"index.html 已生成：{len(CHAPTERS) + 3} 屏，{n} 张照片，{len(html) / 1024:.0f} KB")
 
 
 if __name__ == "__main__":
