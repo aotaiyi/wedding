@@ -122,8 +122,8 @@ HEAD = """<!doctype html>
 <!-- 启幕 -->
 <div id="curtain"><div class="curtain-seal">囍</div></div>
 
-<!-- 背景音乐：把文件放到 assets/audio/bgm.mp3 即可；没有文件时按钮会自动隐藏 -->
-<audio id="bgm" src="assets/audio/bgm.mp3" loop preload="auto" playsinline webkit-playsinline></audio>
+<!-- 背景音乐：preload="none" —— 首屏不下载音频，不与图片抢带宽；点播/微信自动播放时才拉流 -->
+<audio id="bgm" src="assets/audio/bgm.mp3" loop preload="none" playsinline webkit-playsinline></audio>
 <button id="music" class="muted" aria-label="播放音乐">
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
 </button>

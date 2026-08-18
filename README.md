@@ -12,7 +12,7 @@
 index.html              页面本体（改文字就改这个文件）
 assets/css/style.css    样式
 assets/js/main.js       交互：启幕、灯箱、音乐、复制地址
-assets/audio/bgm.mp3    背景音乐（需自备，见下文）
+assets/audio/bgm.mp3    背景音乐，2.7 MB / 2:57（见下文）
 img/lg/                 长边 1600 的展示图（JPG + WebP）
 img/sm/                 长边 720 的缩略图
 img/share.jpg           800×800 微信分享缩略图
@@ -57,8 +57,20 @@ tools/build_preview.py  打包成单文件预览版（CSS/JS/图片全部内联�
 
 ## 背景音乐
 
-把音频文件放到 `assets/audio/bgm.mp3` 即可，页面会自动接上。
-**文件不存在时音乐按钮会自动隐藏**，不会出现点了没反应的情况。
+当前文件：`assets/audio/bgm.mp3`，**2.7 MB / 2:57**，128 kbps CBR 立体声 44.1 kHz。
+
+内容是两段钢琴独奏，各取前 90 秒交叉淡化拼成一条循环：
+
+| 段落 | 出处 | 区间 |
+|---|---|---|
+| 1 | Beethoven Sonate op. 109 | 0:00 – 1:30 |
+| 2 | Brahms Klavierstücke op. 118 | 0:00 – 1:30 |
+
+源 WAV 在 `music/`（共 664 MB，24-bit/48 kHz），**已被 `.gitignore` 排除**，只存本地——单个文件就超 GitHub 100 MB 上限。要重新生成或换区间，见下面的命令。
+
+`<audio>` 用 `preload="none"`：**首屏完全不下载音频**，不与 `img/lg` 的 WebP 抢带宽；只在点播（或微信自动播放）时才拉流，MP3 渐进式解码，几 KB 到位就出声。
+
+**副作用**：不预加载意味着浏览器在首次播放前不会请求文件，所以"文件缺失自动隐藏按钮"不再于载入时触发，而是在首次播放失败时触发（`main.js` 的 `error` 兜底仍然生效）。
 
 播放策略：
 
