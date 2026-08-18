@@ -580,7 +580,9 @@ img {
   letter-spacing: 0.1em;
   text-indent: 0.1em;
   opacity: 0.88;
-  max-width: 24em;
+  /* 25em 而非 24em：第二章副题的自然单行宽度只差 3px，
+   * 卡住它的是这个上限而不是屏幕宽度，放宽一档即可一行排下。 */
+  max-width: 25em;
   /* 均衡两行长度，避免末行只剩一个词（如「Kolen。」「余生。」孤悬）。
    * 不支持的浏览器退回普通断行，无副作用。 */
   text-wrap: balance;
