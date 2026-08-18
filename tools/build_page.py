@@ -18,27 +18,35 @@ import os
 SITE_URL = "https://aotaiyi.github.io/wedding/"
 
 COUPLE = {
-    "groom": "新郎姓名",
-    "bride": "新娘姓名",
-    "groom_en": "GROOM",
-    "bride_en": "BRIDE",
+    "groom": "李文祥",
+    "bride": "武宇峰",
 }
 
 WEDDING = {
-    "date_dot": "2026.10.01",
-    "date_cn": "公历 二〇二六年十月一日",
-    "lunar": "农历 丙午年八月廿一",
-    "weekday": "星期四",
-    "time": "中午 12:00 恭候  12:30 入席",
-    "venue": "酒店名称 · 宴会厅名称",
-    "address": "省份 城市 区县 某某路 123 号",
-    "amap": "https://uri.amap.com/marker?position=116.397428,39.90923&name=%E5%A9%9A%E7%A4%BC%E5%9C%BA%E5%9C%B0",
+    "kicker": "婚礼请柬",
+    "date_dot": "2026.09.12",
+    "date_cn": "公历二〇二六年九月十二日",
+    # 农历经 lunardate 与 zhdate 两个库交叉验证：2026-09-12 = 丙午年八月初二，星期六
+    "lunar": "农历丙午年八月初二",
+    "weekday": "星期六",
+    "hall": "朔州市朔城区艺龙万国酒店",
+    "room": "奥斯卡厅",
+    "venue": "朔州市朔城区艺龙万国酒店 · 奥斯卡厅",
+    "ceremony": "11:50",  # 开礼
+    "banquet": "12:18",  # 开席
+    "ximen_time": "九月十一日 晚 19:00",  # 开喜门
+    "ximen_place": "艺龙万国酒店 · 奥斯卡厅",
+    "address": "山西省朔州市朔城区（详细街道地址待填）",
+    # 用关键词搜索而不是写死经纬度：酒店的精确坐标我无从得知，
+    # 编一个坐标会让导航指到错误位置，比留占位更糟。
+    # 拿到精确坐标后可换成 https://uri.amap.com/marker?position=经度,纬度&name=...
+    "amap": "https://uri.amap.com/search?keyword=%E6%9C%94%E5%B7%9E%E8%89%BA%E9%BE%99%E4%B8%87%E5%9B%BD%E9%85%92%E5%BA%97&city=%E6%9C%94%E5%B7%9E%E5%B8%82",
     "phone": "13800138000",
 }
 
 SHARE = {
-    "title": "我们要结婚啦 · 诚邀您见证",
-    "desc": "2026.10.01　从中国到德国，再到地中海的海边——这一天，我们想和您一起度过。",
+    "title": "李文祥 & 武宇峰 婚礼请柬",
+    "desc": "2026.09.12 农历八月初二　朔州艺龙万国酒店 · 奥斯卡厅　敬备喜筵，恭请光临。",
 }
 
 # 章节：标题、副题、封面图、封面焦点、照片列表
@@ -189,7 +197,7 @@ def main():
     </div>
     <div class="seal">囍</div>
     <div class="cover-card">
-      <p class="kicker rise">We are getting married</p>
+      <p class="kicker rise">{WEDDING['kicker']}</p>
       <h1 class="names rise">{COUPLE['groom']}<span class="amp">&amp;</span>{COUPLE['bride']}</h1>
       <div class="rule rise"></div>
       <p class="date rise">{WEDDING['date_dot']}</p>
@@ -203,21 +211,32 @@ def main():
     # ── 邀请函 ──
     out.append(
         f"""
-  <!-- ═══ 2. 邀请函 ═══ 【改这里】邀请文案 -->
-  <section class="scene paper">
+  <!-- ═══ 2. 邀请函 ═══ 【改这里】邀请文案、开礼/开席/喜门时间 -->
+  <section class="scene paper invite">
     <div class="frame"></div>
     <h2 class="vtitle rise"><span>邀</span><span>请</span><span>函</span></h2>
     <div class="invite-body rise">
       谨定于<br>
       <strong>{WEDDING['date_cn']}</strong><br>
       {WEDDING['lunar']}　{WEDDING['weekday']}<br><br>
-      假座 <strong>{WEDDING['venue']}</strong><br>
-      为 <strong>{COUPLE['groom']}</strong> 先生<br>
-      与 <strong>{COUPLE['bride']}</strong> 女士<br>
-      举行结婚典礼<br><br>
-      敬备喜筵　恭请光临
+      <strong>{WEDDING['hall']}</strong><br>
+      <strong>{WEDDING['room']}</strong><br><br>
+      为 <b>{COUPLE['groom']}</b> 先生<br>
+      与 <b>{COUPLE['bride']}</b> 女士<br>
+      举行结婚典礼
     </div>
-    <p class="signature rise">— 敬邀 —</p>
+    <div class="invite-detail rise">
+      <p class="row">
+        <span class="lab">开礼</span><b>{WEDDING['ceremony']}</b>
+        <i></i>
+        <span class="lab">开席</span><b>{WEDDING['banquet']}</b>
+      </p>
+      <p class="row">
+        <span class="lab">喜门</span><b>{WEDDING['ximen_time']}</b>
+      </p>
+      <p class="row-sub">{WEDDING['ximen_place']}</p>
+    </div>
+    <p class="signature rise">敬备喜筵　恭请光临</p>
   </section>
 """
     )
@@ -269,8 +288,10 @@ def main():
     <p class="big-date rise">{WEDDING['date_dot']}</p>
     <p class="weekday rise">{WEDDING['weekday']}　{WEDDING['lunar']}</p>
     <dl class="rise">
-      <dt>时间</dt>
-      <dd>{WEDDING['time']}</dd>
+      <dt>开礼 / 开席</dt>
+      <dd>{WEDDING['ceremony']} 开礼　{WEDDING['banquet']} 开席</dd>
+      <dt>喜门</dt>
+      <dd>{WEDDING['ximen_time']}<small>{WEDDING['ximen_place']}</small></dd>
       <dt>地点</dt>
       <dd>{WEDDING['venue']}<small>{WEDDING['address']}</small></dd>
     </dl>
