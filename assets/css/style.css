@@ -60,7 +60,10 @@ img {
 
 #curtain {
   position: fixed;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   z-index: 100;
   display: grid;
   place-items: center;
@@ -132,7 +135,10 @@ img {
 /* 全幅背景照片 */
 .bg {
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   z-index: 0;
 }
 
@@ -146,7 +152,10 @@ img {
 .bg::after {
   content: "";
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   background: var(--veil, linear-gradient(180deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.15) 38%, rgba(0, 0, 0, 0.62) 100%));
 }
 
@@ -215,7 +224,10 @@ img {
 .cover-photo::after {
   content: "";
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   background: linear-gradient(
     180deg,
     rgba(0, 0, 0, 0.16) 0%,
@@ -260,8 +272,8 @@ img {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 15px;
   font-family: var(--serif-cn);
+  font-size: 22px;
   font-size: clamp(19px, 6.6vw, 27px);
   color: var(--cinnabar);
 }
@@ -275,6 +287,16 @@ img {
   background: var(--gold);
 }
 
+/* 间距一律用 margin 而非 flex gap：gap 要 Chromium 84 / iOS 14.5，
+ * 而微信安卓端的 X5 内核长期停留在 Chromium 57–77，不支持时间距会全部归零。 */
+.cover .kicker::before {
+  margin-right: 15px;
+}
+
+.cover .kicker::after {
+  margin-left: 15px;
+}
+
 .cover .kicker span {
   letter-spacing: 0.32em;
   /* 抵消末字之后的那段字距，使文字在两条细线之间真正居中。
@@ -284,6 +306,7 @@ img {
 
 .cover .names {
   font-family: var(--serif-cn);
+  font-size: 32px;
   font-size: clamp(28px, 8.4vw, 40px);
   font-weight: 400;
   line-height: 1.32;
@@ -355,7 +378,6 @@ img {
   display: flex;
   flex-direction: column-reverse;
   align-items: center;
-  gap: 5px;
   color: var(--muted);
   font-size: 9px;
   letter-spacing: 0.28em;
@@ -363,6 +385,7 @@ img {
 }
 
 .cover .hint i {
+  margin-top: 5px;
   width: 1px;
   height: 20px;
   background: currentColor;
@@ -389,7 +412,10 @@ img {
 .paper::before {
   content: "";
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   background-image: radial-gradient(
       circle at 18% 22%,
       rgba(176, 141, 87, 0.07),
@@ -401,7 +427,10 @@ img {
 
 .paper .frame {
   position: absolute;
-  inset: 16px;
+  top: 16px;
+  right: 16px;
+  bottom: 16px;
+  left: 16px;
   border: 1px solid rgba(28, 25, 23, 0.14);
   pointer-events: none;
 }
@@ -409,7 +438,10 @@ img {
 .paper .frame::after {
   content: "";
   position: absolute;
-  inset: 6px;
+  top: 6px;
+  right: 6px;
+  bottom: 6px;
+  left: 6px;
   border: 1px solid rgba(158, 43, 37, 0.16);
 }
 
@@ -421,8 +453,8 @@ img {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.3em;
   font-family: var(--serif-cn);
+  font-size: 24px;
   font-size: clamp(17px, min(6.8vw, 3.15vh), 28px);
   font-weight: 400;
   line-height: 1;
@@ -434,8 +466,13 @@ img {
   display: block;
 }
 
+.vtitle span + span {
+  margin-top: 0.3em;
+}
+
 .invite-body {
   font-family: var(--serif-cn);
+  font-size: 14px;
   font-size: clamp(13px, min(4.7vw, 2.25vh), 19px);
   line-height: 2.15;
   text-align: center;
@@ -488,10 +525,14 @@ img {
   align-items: baseline;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 0 8px;
+  font-size: 15px;
   font-size: clamp(12.5px, min(4.3vw, 2vh), 17px);
   line-height: 1.85;
   color: #3a342e;
+}
+
+.invite-detail .row > * {
+  margin: 0 4px;
 }
 
 .invite-detail .lab {
@@ -517,6 +558,7 @@ img {
 
 .invite-detail .row-sub {
   margin-top: 2px;
+  font-size: 12px;
   font-size: clamp(11px, min(3.5vw, 1.6vh), 13.5px);
   letter-spacing: 0.14em;
   color: var(--muted);
@@ -526,6 +568,7 @@ img {
   margin-top: 24px;
   text-align: center;
   font-family: var(--serif-cn);
+  font-size: 14px;
   font-size: clamp(14px, 4vw, 15.5px);
   letter-spacing: 0.24em;
   text-indent: 0.24em;
@@ -565,6 +608,7 @@ img {
 .chapter-title {
   font-family: var(--serif-cn);
   text-wrap: balance;
+  font-size: 32px;
   font-size: clamp(28px, 8.5vw, 40px);
   font-weight: 400;
   letter-spacing: 0.22em;
@@ -578,6 +622,7 @@ img {
  * 320px 的老机型仍会换行 —— 再压就小到看不清了，那时由 text-wrap:balance
  * 断在逗号处兜底。 */
 .chapter-sub {
+  font-size: 12.5px;
   font-size: clamp(11.5px, 3.35vw, 14px);
   letter-spacing: 0.04em;
   text-indent: 0.04em;
@@ -647,6 +692,9 @@ img {
  * 1280px 宽时高达 822px，会把标题和缩略图整个顶出框线外。
  * 66vh 上限保证它在任何视口下都只占约 44vh 高。 */
 .plate {
+  width: 100%;
+  /* max-width 不依赖 min()，老内核也认：避免宽视口下照片长到顶破版面 */
+  max-width: 560px;
   width: min(100%, 66vh);
   margin: 0 auto 24px;
   padding: 7px;
@@ -663,18 +711,22 @@ img {
 /* 横滑照片条 */
 .strip {
   display: flex;
-  gap: 10px;
   overflow-x: auto;
   scroll-snap-type: x proximity;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   padding: 2px 0 4px;
   margin: 0 -28px;
-  padding-inline: 28px;
+  padding-left: 28px;
+  padding-right: 28px;
 }
 
 .strip::-webkit-scrollbar {
   display: none;
+}
+
+.strip button + button {
+  margin-left: 10px;
 }
 
 .strip button {
@@ -695,7 +747,10 @@ img {
 .strip button::after {
   content: "";
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   border: 1px solid rgba(255, 255, 255, 0.26);
   border-radius: 2px;
 }
@@ -723,17 +778,19 @@ img {
 
 .actions {
   display: flex;
-  gap: 9px;
   justify-content: center;
   flex-wrap: wrap;
   margin-top: 18px;
+}
+
+.actions > * {
+  margin: 0 4.5px;
 }
 
 .btn {
   appearance: none;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
   padding: 11px 18px;
   border: 1px solid var(--cinnabar);
   border-radius: 2px;
@@ -779,6 +836,7 @@ img {
 
 .outro .word {
   font-family: var(--serif-cn);
+  font-size: 34px;
   font-size: clamp(30px, 9vw, 42px);
   letter-spacing: 0.5em;
   text-indent: 0.5em;
@@ -846,7 +904,10 @@ img {
   z-index: 30;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+}
+
+#dots i + i {
+  margin-top: 8px;
 }
 
 #dots i {
@@ -875,7 +936,10 @@ img {
 
 #lightbox {
   position: fixed;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   z-index: 90;
   background: #0b0a09;
   display: none;
@@ -965,11 +1029,16 @@ img {
   }
   .cover .kicker {
     font-size: 19px;
-    gap: 11px;
   }
   .cover .kicker::before,
   .cover .kicker::after {
     width: 22px;
+  }
+  .cover .kicker::before {
+    margin-right: 11px;
+  }
+  .cover .kicker::after {
+    margin-left: 11px;
   }
   /* 邀请函这一屏内容最多（正文 + 时间块 + 三个按钮），矮屏上必须压紧。
    * 真机是宋体，字体度量与测试环境的黑体不同，所以要留足余量而非刚好装下。 */
