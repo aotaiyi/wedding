@@ -36,12 +36,14 @@ WEDDING = {
     "banquet": "12:18",  # 开席
     # 开喜门。地点与婚礼同址，页面上不再重复一遍场地名
     "ximen_time": "九月十一日 晚 19:00",
-    "address": "山西省朔州市朔城区（详细街道地址待填）",
+    # 详细地址就是酒店名本身，与上方场地完全重复，所以不在页面上单独列一行，
+    # 只用于「复制地址」按钮。若日后拿到具体街道门牌，填在这里就会自动显示出来。
+    "address": "",
+    "copy_text": "朔州市朔城区艺龙万国酒店 · 奥斯卡厅",
     # 用关键词搜索而不是写死经纬度：酒店的精确坐标我无从得知，
     # 编一个坐标会让导航指到错误位置，比留占位更糟。
     # 拿到精确坐标后可换成 https://uri.amap.com/marker?position=经度,纬度&name=...
     "amap": "https://uri.amap.com/search?keyword=%E6%9C%94%E5%B7%9E%E8%89%BA%E9%BE%99%E4%B8%87%E5%9B%BD%E9%85%92%E5%BA%97&city=%E6%9C%94%E5%B7%9E%E5%B8%82",
-    "phone": "13800138000",
 }
 
 SHARE = {
@@ -209,6 +211,12 @@ def main():
     )
 
     # ── 邀请函 ──
+    # 地址只在填了内容时才输出，避免空标签留下一段空白
+    addr_row = (
+        f'\n      <p class="row-sub">{WEDDING["address"]}</p>'
+        if WEDDING["address"]
+        else ""
+    )
     out.append(
         f"""
   <!-- ═══ 2. 邀请函 ═══ 【改这里】邀请文案、开礼/开席/喜门时间 -->
@@ -240,13 +248,11 @@ def main():
       </p>
       <p class="row">
         <span class="lab">喜门</span><b>{WEDDING['ximen_time']}</b>
-      </p>
-      <p class="row-sub">{WEDDING['address']}</p>
+      </p>{addr_row}
     </div>
     <div class="actions rise">
       <a class="btn solid" href="{WEDDING['amap']}" target="_blank" rel="noopener">地图导航</a>
-      <button class="btn" type="button" data-copy="{WEDDING['venue']}　{WEDDING['address']}">复制地址</button>
-      <a class="btn" href="tel:{WEDDING['phone']}">联系我们</a>
+      <button class="btn" type="button" data-copy="{WEDDING['copy_text']}">复制地址</button>
     </div>
   </section>
 """

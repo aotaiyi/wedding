@@ -943,13 +943,10 @@ img {
   /* 邀请函这一屏内容最多（正文 + 时间块 + 三个按钮），矮屏上必须压紧。
    * 真机是宋体，字体度量与测试环境的黑体不同，所以要留足余量而非刚好装下。 */
   .invite-body {
-    line-height: 1.7;
+    line-height: 1.88;
   }
   .invite-body p + p {
-    margin-top: 0.7em;
-  }
-  .invite-body .salute {
-    margin-top: 0.85em;
+    margin-top: 0.8em;
   }
   .actions {
     margin-top: 14px;
@@ -978,7 +975,7 @@ img {
 }
 
 @media (max-height: 640px) {
-  .invite-body { line-height: 1.62; }
+  .invite-body { line-height: 1.76; }
   .vtitle { margin-bottom: 10px; }
   .scene { padding-left: 20px; padding-right: 20px; }
   .btn { padding: 9px 13px; font-size: 12px; }
