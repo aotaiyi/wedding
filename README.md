@@ -20,6 +20,7 @@ img/lqip.json           模糊占位图数据
 photo/                  原图存档，292 MB，网页不直接引用
 tools/build_images.py   原图 → 网页图（可重复执行）
 tools/build_page.py     生成 index.html（会覆盖手改内容，慎用）
+tools/build_preview.py  打包成单文件预览版（CSS/JS/图片全部内联）
 ```
 
 ## 要改的地方
@@ -83,6 +84,15 @@ python3 -m http.server 8000
 ```
 
 用手机预览：确保手机和电脑在同一 WiFi，访问 `http://电脑IP:8000`。
+
+## 打包成单文件
+
+```bash
+python3 tools/build_preview.py
+```
+
+把 CSS、JS 和全部照片内联成一个约 4 MB 的自包含 HTML，不依赖任何外部资源，
+可以直接发给别人或丢到任意静态空间预览。预览版不含音乐按钮（因为没有随附音频文件）。
 
 ---
 
