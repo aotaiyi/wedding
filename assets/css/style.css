@@ -252,15 +252,34 @@ img {
   );
 }
 
-/* 抬头与姓名的字号比约 0.52，是个舒服的层级差：
- * 再小就沦为附注，再大就和姓名抢主角。
- * 字距随字号放大而收紧 —— 大字本就不需要那么疏的排布。 */
+/* 报头：这是整个页面的主题，要第一眼抓住。
+ * 靠三件事立起来，而不只是字号 ——
+ * 朱砂色（比原先的鎏金在米底上更有分量）、两侧细线（明确它是报头而非说明）、
+ * 字号提到姓名的约 0.79。姓名仍是最大的元素，主次不乱。 */
 .cover .kicker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
   font-family: var(--serif-cn);
-  font-size: clamp(15px, 4.4vw, 19px);
-  letter-spacing: 0.4em;
-  text-indent: 0.4em;
-  color: var(--gold);
+  font-size: clamp(19px, 6.6vw, 27px);
+  color: var(--cinnabar);
+}
+
+.cover .kicker::before,
+.cover .kicker::after {
+  content: "";
+  flex: 0 0 auto;
+  width: 28px;
+  height: 1px;
+  background: var(--gold);
+}
+
+.cover .kicker span {
+  letter-spacing: 0.32em;
+  /* 抵消末字之后的那段字距，使文字在两条细线之间真正居中。
+   * 原来用的 text-indent 在 flex 容器里不生效，只能靠 padding。 */
+  padding-left: 0.32em;
 }
 
 .cover .names {
@@ -270,7 +289,7 @@ img {
   line-height: 1.32;
   letter-spacing: 0.16em;
   text-indent: 0.16em;
-  margin: 17px 0 0;
+  margin: 19px 0 0;
   color: var(--ink);
 }
 
@@ -942,9 +961,12 @@ img {
     padding-bottom: calc(28px + max(8px, env(safe-area-inset-bottom)));
   }
   .cover .kicker {
-    font-size: 14.5px;
-    letter-spacing: 0.34em;
-    text-indent: 0.34em;
+    font-size: 19px;
+    gap: 11px;
+  }
+  .cover .kicker::before,
+  .cover .kicker::after {
+    width: 22px;
   }
   /* 邀请函这一屏内容最多（正文 + 时间块 + 三个按钮），矮屏上必须压紧。
    * 真机是宋体，字体度量与测试环境的黑体不同，所以要留足余量而非刚好装下。 */

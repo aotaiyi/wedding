@@ -199,7 +199,7 @@ def main():
     </div>
     <div class="seal">囍</div>
     <div class="cover-card">
-      <p class="kicker rise">{WEDDING['kicker']}</p>
+      <p class="kicker rise"><span>{WEDDING['kicker']}</span></p>
       <h1 class="names rise">{COUPLE['groom']}<span class="amp">&amp;</span>{COUPLE['bride']}</h1>
       <div class="rule rise"></div>
       <p class="date rise">{WEDDING['date_dot']}</p>
