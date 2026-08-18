@@ -176,7 +176,7 @@ python3 tools/build_preview.py
 
 # 隐私提醒
 
-**这个仓库目前是 Public（公开）的**，意味着 292 MB 的婚纱原图对全网公开、
+**这个仓库目前是 Public（公开）的**，意味着 326 MB 的婚纱原图对全网公开、
 可被任意下载和搜索引擎抓取。
 
 如果不希望如此，去 Settings → 最下方 Danger Zone → Change visibility 改为 Private。
