@@ -1,0 +1,1013 @@
+/* 婚礼请柬 H5
+ * 中西合璧：中国的朱砂宣纸 → 德国的雾灰 → 地中海的蓝
+ * 移动端优先，无框架，无外部字体（国内可直连）
+ */
+
+:root {
+  /* 中式 */
+  --ink: #1c1917;
+  --paper: #f5f1e8;
+  --paper-warm: #ebe2d3;
+  --cinnabar: #9e2b25;
+  --cinnabar-soft: #c0483f;
+  --gold: #b08d57;
+
+  /* 西式 */
+  --sea: #34687e;
+  --sky: #7fa3b8;
+  --stone: #cfc6b8;
+  --muted: #8a8176;
+
+  --serif-cn: "Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC",
+    "SimSun", serif;
+  --sans-cn: -apple-system, BlinkMacSystemFont, "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --serif-en: "Optima", "Palatino Linotype", Palatino, Georgia,
+    "Times New Roman", serif;
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--ink);
+  color: var(--ink);
+  font-family: var(--sans-cn);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* ── 启幕动画 ───────────────────────────────────────── */
+
+#curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: var(--paper);
+  transition: opacity 0.9s var(--ease), visibility 0.9s;
+}
+
+#curtain.done {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.curtain-seal {
+  width: 74px;
+  height: 74px;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid var(--cinnabar);
+  border-radius: 3px;
+  color: var(--cinnabar);
+  font-family: var(--serif-cn);
+  font-size: 38px;
+  line-height: 1;
+  animation: breathe 2.2s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.97);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ── 滚动容器与场景 ─────────────────────────────────── */
+
+.deck {
+  height: 100vh;
+  height: 100dvh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.deck::-webkit-scrollbar {
+  display: none;
+}
+
+.scene {
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: max(28px, env(safe-area-inset-top)) 28px
+    max(28px, env(safe-area-inset-bottom));
+}
+
+/* 全幅背景照片 */
+.bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--focus, 50% 50%);
+}
+
+.bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--veil, linear-gradient(180deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.15) 38%, rgba(0, 0, 0, 0.62) 100%));
+}
+
+.scene > *:not(.bg) {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+/* 入场动画 */
+.rise {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 1s var(--ease), transform 1s var(--ease);
+}
+
+.scene.in .rise {
+  opacity: 1;
+  transform: none;
+}
+
+.scene.in .rise:nth-of-type(2) { transition-delay: 0.12s; }
+.scene.in .rise:nth-of-type(3) { transition-delay: 0.24s; }
+.scene.in .rise:nth-of-type(4) { transition-delay: 0.36s; }
+.scene.in .rise:nth-of-type(5) { transition-delay: 0.48s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rise {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .curtain-seal {
+    animation: none;
+  }
+}
+
+/* ── 封面 ───────────────────────────────────────────────
+ * 对开式：上方照片 + 下方宣纸。
+ * 横构图照片塞进全屏竖屏只能看到约 31% 的画幅宽度，两个人装不下；
+ * 照片区收成 3:4 后可见宽度提升到约 51%，同时文字落在宣纸上，永远清晰。
+ */
+
+.cover {
+  --split: 58%;
+  padding: 0;
+  display: grid;
+  /* minmax(0,1fr) 而非 1fr：否则内容的 min-content 会把行撑大、顶破整屏 */
+  grid-template-rows: var(--split) minmax(0, 1fr);
+  background: var(--paper);
+}
+
+.cover-photo {
+  position: relative;
+  overflow: hidden;
+  background: var(--ink);
+}
+
+.cover-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--focus, 50% 50%);
+}
+
+.cover-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.16) 0%,
+    transparent 26%,
+    transparent 74%,
+    rgba(28, 25, 23, 0.22) 100%
+  );
+}
+
+.cover-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--ink);
+  /* 上留白让开压在接缝上的印章，下留白让开「下滑」提示 */
+  padding: 28px 28px calc(32px + max(10px, env(safe-area-inset-bottom)));
+}
+
+.cover-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 28px;
+  right: 28px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(158, 43, 37, 0.3),
+    transparent
+  );
+}
+
+/* 报头：这是整个页面的主题，要第一眼抓住。
+ * 靠三件事立起来，而不只是字号 ——
+ * 朱砂色（比原先的鎏金在米底上更有分量）、两侧细线（明确它是报头而非说明）、
+ * 字号提到姓名的约 0.79。姓名仍是最大的元素，主次不乱。 */
+.cover .kicker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  font-family: var(--serif-cn);
+  font-size: clamp(19px, 6.6vw, 27px);
+  color: var(--cinnabar);
+}
+
+.cover .kicker::before,
+.cover .kicker::after {
+  content: "";
+  flex: 0 0 auto;
+  width: 28px;
+  height: 1px;
+  background: var(--gold);
+}
+
+.cover .kicker span {
+  letter-spacing: 0.32em;
+  /* 抵消末字之后的那段字距，使文字在两条细线之间真正居中。
+   * 原来用的 text-indent 在 flex 容器里不生效，只能靠 padding。 */
+  padding-left: 0.32em;
+}
+
+.cover .names {
+  font-family: var(--serif-cn);
+  font-size: clamp(28px, 8.4vw, 40px);
+  font-weight: 400;
+  line-height: 1.32;
+  letter-spacing: 0.16em;
+  text-indent: 0.16em;
+  margin: 19px 0 0;
+  color: var(--ink);
+}
+
+.cover .names .amp {
+  display: block;
+  font-family: var(--serif-en);
+  font-size: 0.4em;
+  color: var(--cinnabar);
+  letter-spacing: 0;
+  text-indent: 0;
+  margin: 4px 0;
+}
+
+.cover .date {
+  font-family: var(--serif-en);
+  font-size: 15px;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  color: var(--cinnabar);
+}
+
+.cover .rule {
+  width: 40px;
+  height: 1px;
+  background: var(--gold);
+  margin: 18px auto;
+}
+
+.cover .place {
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+  color: var(--muted);
+}
+
+/* 印章：压在照片与宣纸的接缝上。
+ * 必须挂在 .cover 上而不是 .cover-photo —— 后者有 overflow:hidden，
+ * 会把印章伸出接缝的下半截裁掉。 */
+.cover .seal {
+  position: absolute;
+  z-index: 2;
+  left: 28px;
+  top: calc(var(--split) - 23px);
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  background: var(--cinnabar);
+  color: #fff;
+  border-radius: 3px;
+  font-family: var(--serif-cn);
+  font-size: 24px;
+  line-height: 1;
+  box-shadow: 0 4px 16px rgba(28, 25, 23, 0.28);
+}
+
+/* 下滑提示 */
+.cover .hint {
+  position: absolute;
+  left: 50%;
+  bottom: max(14px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-indent: 0.28em;
+}
+
+.cover .hint i {
+  width: 1px;
+  height: 20px;
+  background: currentColor;
+  animation: drop 2s var(--ease) infinite;
+  transform-origin: top;
+}
+
+/* 位移必须小于 .hint 的 bottom 留白（14px）：
+ * 被 transform 位移的元素会计入滚动溢出区，超出就会被 .scene 的
+ * overflow:hidden 齐根裁断 —— 而此刻它还有约 46% 不透明度，看得出来。 */
+@keyframes drop {
+  0% { transform: scaleY(0); opacity: 0; }
+  40% { transform: scaleY(1); opacity: 1; }
+  100% { transform: scaleY(1) translateY(13px); opacity: 0; }
+}
+
+/* ── 宣纸场景（邀请函 / 婚礼信息）───────────────────── */
+
+.paper {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.paper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+      circle at 18% 22%,
+      rgba(176, 141, 87, 0.07),
+      transparent 55%
+    ),
+    radial-gradient(circle at 82% 78%, rgba(158, 43, 37, 0.05), transparent 55%);
+  pointer-events: none;
+}
+
+.paper .frame {
+  position: absolute;
+  inset: 16px;
+  border: 1px solid rgba(28, 25, 23, 0.14);
+  pointer-events: none;
+}
+
+.paper .frame::after {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(158, 43, 37, 0.16);
+}
+
+/* 竖排标题
+ * 用「每字一行」堆叠，而不是 writing-mode: vertical-rl。
+ * 后者依赖字体内的竖排度量表（vmtx/vhea），缺失时字会叠在一起；
+ * 堆叠写法在任何字体下都稳定。 */
+.vtitle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3em;
+  font-family: var(--serif-cn);
+  font-size: clamp(17px, min(6.8vw, 3.15vh), 28px);
+  font-weight: 400;
+  line-height: 1;
+  color: var(--cinnabar);
+  margin: 0 auto 28px;
+}
+
+.vtitle span {
+  display: block;
+}
+
+.invite-body {
+  font-family: var(--serif-cn);
+  font-size: clamp(13px, min(4.7vw, 2.25vh), 19px);
+  line-height: 2.15;
+  text-align: center;
+  color: #3a342e;
+  max-width: 23em;
+  margin: 0 auto;
+}
+
+/* 段间距用 margin 控制，而不是靠 <br><br>。
+ * 空行会占满一整个行高（19px × 2.2 ≈ 42px），三处段落就白吃掉 75px，
+ * 这一屏本来就装不下。 */
+.invite-body p + p {
+  margin-top: 0.85em;
+}
+
+.invite-body .salute {
+  margin-top: 1.05em;
+  letter-spacing: 0.12em;
+}
+
+/* 场地、日期这类关键信息：朱砂 + 细下划线 */
+.invite-body strong {
+  font-weight: 400;
+  color: var(--cinnabar);
+  border-bottom: 1px solid rgba(158, 43, 37, 0.28);
+  padding-bottom: 1px;
+}
+
+/* 新人姓名：不加下划线，靠字号和颜色立起来 */
+.invite-body b {
+  font-weight: 400;
+  font-size: 1.24em;
+  color: var(--cinnabar);
+  letter-spacing: 0.1em;
+}
+
+/* 开礼 / 开席 / 喜门：用上下两条朱砂细线圈成一块，和正文分开 */
+.invite-detail {
+  max-width: 23em;
+  margin: 22px auto 0;
+  padding: 15px 0;
+  border-top: 1px solid rgba(158, 43, 37, 0.2);
+  border-bottom: 1px solid rgba(158, 43, 37, 0.2);
+  font-family: var(--serif-cn);
+  text-align: center;
+}
+
+.invite-detail .row {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0 8px;
+  font-size: clamp(12.5px, min(4.3vw, 2vh), 17px);
+  line-height: 1.85;
+  color: #3a342e;
+}
+
+.invite-detail .lab {
+  font-size: 0.8em;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  color: var(--gold);
+}
+
+.invite-detail b {
+  font-weight: 400;
+  color: var(--cinnabar);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 开礼与开席之间的竖向分隔 */
+.invite-detail .row i {
+  width: 1px;
+  height: 0.95em;
+  margin: 0 4px;
+  background: rgba(158, 43, 37, 0.26);
+}
+
+.invite-detail .row-sub {
+  margin-top: 2px;
+  font-size: clamp(11px, min(3.5vw, 1.6vh), 13.5px);
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+
+.signature {
+  margin-top: 24px;
+  text-align: center;
+  font-family: var(--serif-cn);
+  font-size: clamp(14px, 4vw, 15.5px);
+  letter-spacing: 0.24em;
+  text-indent: 0.24em;
+  color: var(--muted);
+}
+
+/* ── 章节场景 ───────────────────────────────────────── */
+
+/* 文字一律压在画面底部，配合下重上轻的遮罩。
+ * 婚纱照的人脸几乎都在画面上半部，把字放顶部必然压脸；
+ * 而巴塞罗那那组的白墙背景又会让顶部的白字彻底消失。 */
+.chapter {
+  justify-content: flex-end;
+  color: var(--paper);
+  --veil: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.26) 0%,
+    rgba(0, 0, 0, 0.06) 24%,
+    rgba(0, 0, 0, 0.34) 52%,
+    rgba(0, 0, 0, 0.74) 76%,
+    rgba(0, 0, 0, 0.92) 100%
+  );
+}
+
+.chapter-head {
+  padding-bottom: 20px;
+}
+
+.chapter-no {
+  font-family: var(--serif-en);
+  font-size: 11px;
+  letter-spacing: 0.4em;
+  text-indent: 0.4em;
+  opacity: 0.72;
+}
+
+.chapter-title {
+  font-family: var(--serif-cn);
+  text-wrap: balance;
+  font-size: clamp(28px, 8.5vw, 40px);
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  margin: 12px 0 10px;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.35);
+}
+
+.chapter-sub {
+  font-size: 13px;
+  /* 0.1em 而非 0.16em：收紧后副题刚好能排成一行，
+   * 既不出现孤字也不从词中间断开；窄屏真需要换行时由 text-wrap:balance 兜底。 */
+  letter-spacing: 0.1em;
+  text-indent: 0.1em;
+  opacity: 0.88;
+  max-width: 24em;
+  /* 均衡两行长度，避免末行只剩一个词（如「Kolen。」「余生。」孤悬）。
+   * 不支持的浏览器退回普通断行，无副作用。 */
+  text-wrap: balance;
+}
+
+.chapter-sub::before {
+  content: "";
+  display: block;
+  width: 30px;
+  height: 1px;
+  background: var(--gold);
+  margin-bottom: 14px;
+  opacity: 0.9;
+}
+
+/* 中式章节：宣纸衬底，照片完整呈现不裁切。
+ * 这组棚拍全是横构图且人物分居画面两侧，任何竖版裁切都会切掉一个人。 */
+.chapter.paper {
+  color: var(--ink);
+  justify-content: center;
+}
+
+.chapter.paper .chapter-head {
+  padding-bottom: 22px;
+}
+
+.chapter.paper .chapter-no {
+  color: var(--gold);
+  opacity: 1;
+}
+
+.chapter.paper .chapter-title {
+  color: var(--cinnabar);
+  text-shadow: none;
+}
+
+.chapter.paper .chapter-sub {
+  color: #3a342e;
+  opacity: 1;
+}
+
+.chapter.paper .strip-note {
+  color: var(--muted);
+  opacity: 1;
+}
+
+.chapter.paper .strip button {
+  background: rgba(28, 25, 23, 0.06);
+}
+
+.chapter.paper .strip button::after {
+  border-color: rgba(28, 25, 23, 0.16);
+}
+
+.chapter.paper .chapter-foot {
+  padding-bottom: 0;
+}
+
+/* 照片宽度同时受容器和视口高度约束。
+ * 这是张横构图（约 3:2），只按 width:100% 的话视口一宽它就等比变高 ——
+ * 1280px 宽时高达 822px，会把标题和缩略图整个顶出框线外。
+ * 66vh 上限保证它在任何视口下都只占约 44vh 高。 */
+.plate {
+  width: min(100%, 66vh);
+  margin: 0 auto 24px;
+  padding: 7px;
+  background: #fff;
+  border: 1px solid rgba(28, 25, 23, 0.13);
+  box-shadow: 0 6px 22px rgba(28, 25, 23, 0.07);
+}
+
+.plate img {
+  width: 100%;
+  height: auto;
+}
+
+/* 横滑照片条 */
+.strip {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 2px 0 4px;
+  margin: 0 -28px;
+  padding-inline: 28px;
+}
+
+.strip::-webkit-scrollbar {
+  display: none;
+}
+
+.strip button {
+  flex: 0 0 auto;
+  width: 74px;
+  height: 98px;
+  padding: 0;
+  border: 0;
+  border-radius: 2px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.12);
+  scroll-snap-align: start;
+  cursor: pointer;
+  position: relative;
+  outline-offset: 3px;
+}
+
+.strip button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 2px;
+}
+
+.strip img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background-size: cover;
+}
+
+.strip-note {
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-indent: 0.24em;
+  opacity: 0.6;
+  margin-bottom: 10px;
+}
+
+.chapter-foot {
+  padding-bottom: 2vh;
+}
+
+/* ── 操作按钮（邀请函页底部）─────────────────────── */
+
+.actions {
+  display: flex;
+  gap: 9px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 18px;
+  border: 1px solid var(--cinnabar);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--cinnabar);
+  font-family: var(--sans-cn);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.25s var(--ease), color 0.25s var(--ease);
+}
+
+.btn.solid {
+  background: var(--cinnabar);
+  color: #fff;
+}
+
+.btn:active {
+  background: var(--cinnabar);
+  color: #fff;
+}
+
+/* ── 结尾 ───────────────────────────────────────────── */
+
+.outro {
+  text-align: center;
+  color: var(--paper);
+  justify-content: center;
+  --veil: radial-gradient(
+      ellipse 82% 34% at 50% 27%,
+      rgba(0, 0, 0, 0.6) 0%,
+      rgba(0, 0, 0, 0.24) 62%,
+      transparent 100%
+    ),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.36) 0%, transparent 46%, rgba(0, 0, 0, 0.42) 100%);
+}
+
+.outro {
+  justify-content: flex-start;
+  padding-top: 17vh;
+}
+
+.outro .word {
+  font-family: var(--serif-cn);
+  font-size: clamp(30px, 9vw, 42px);
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  text-shadow: 0 2px 22px rgba(0, 0, 0, 0.45);
+}
+
+.outro .who {
+  margin-top: 26px;
+  font-family: var(--serif-cn);
+  font-size: 15px;
+  letter-spacing: 0.28em;
+  text-indent: 0.28em;
+  opacity: 0.94;
+}
+
+/* ── 音乐开关 ───────────────────────────────────────── */
+
+#music {
+  position: fixed;
+  top: max(22px, env(safe-area-inset-top));
+  right: 22px;
+  z-index: 40;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+#music svg {
+  width: 17px;
+  height: 17px;
+  fill: rgba(255, 255, 255, 0.94);
+  animation: spin 6s linear infinite;
+  animation-play-state: paused;
+}
+
+#music.playing svg {
+  animation-play-state: running;
+}
+
+#music.muted svg {
+  fill: rgba(255, 255, 255, 0.42);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── 进度点 ─────────────────────────────────────────── */
+
+#dots {
+  position: fixed;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#dots i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.42);
+  transition: all 0.35s var(--ease);
+}
+
+#dots i.on {
+  background: var(--gold);
+  height: 12px;
+  border-radius: 2px;
+}
+
+#dots.dark i {
+  background: rgba(28, 25, 23, 0.22);
+}
+
+#dots.dark i.on {
+  background: var(--cinnabar);
+}
+
+/* ── 灯箱 ───────────────────────────────────────────── */
+
+#lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: #0b0a09;
+  display: none;
+  flex-direction: column;
+}
+
+#lightbox.open {
+  display: flex;
+}
+
+#lb-track {
+  flex: 1;
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+#lb-track::-webkit-scrollbar {
+  display: none;
+}
+
+#lb-track figure {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  display: grid;
+  place-items: center;
+  padding: 52px 12px;
+}
+
+#lb-track img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+#lb-close {
+  position: absolute;
+  top: max(16px, env(safe-area-inset-top));
+  right: 16px;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 19px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+#lb-count {
+  position: absolute;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: var(--serif-en);
+  font-size: 12px;
+  letter-spacing: 0.24em;
+  text-indent: 0.24em;
+}
+
+/* ── 小屏适配 ───────────────────────────────────────── */
+
+/* iPhone SE 一类的矮屏：宣纸区只剩 ~280px，需要给它多分一点并收紧字号 */
+@media (max-height: 700px) {
+  .cover {
+    --split: 52%;
+  }
+  .cover .names {
+    font-size: 26px;
+    margin-top: 12px;
+  }
+  .cover .rule {
+    margin: 9px auto;
+  }
+  .cover .date {
+    font-size: 13px;
+  }
+  .cover-card {
+    padding-top: 24px;
+    padding-bottom: calc(28px + max(8px, env(safe-area-inset-bottom)));
+  }
+  .cover .kicker {
+    font-size: 19px;
+    gap: 11px;
+  }
+  .cover .kicker::before,
+  .cover .kicker::after {
+    width: 22px;
+  }
+  /* 邀请函这一屏内容最多（正文 + 时间块 + 三个按钮），矮屏上必须压紧。
+   * 真机是宋体，字体度量与测试环境的黑体不同，所以要留足余量而非刚好装下。 */
+  .invite-body {
+    line-height: 1.88;
+  }
+  .invite-body p + p {
+    margin-top: 0.8em;
+  }
+  .actions {
+    margin-top: 14px;
+  }
+  .vtitle {
+    font-size: 21px;
+    margin-bottom: 14px;
+  }
+  .invite-detail {
+    margin-top: 12px;
+    padding: 9px 0;
+  }
+  .invite-detail .row {
+    line-height: 1.75;
+  }
+  .signature {
+    margin-top: 14px;
+  }
+}
+
+@media (max-height: 760px) {
+  .invite-body { line-height: 1.95; }
+  .invite-detail { margin-top: 15px; padding: 11px 0; }
+  .signature { margin-top: 16px; }
+  .vtitle { margin-bottom: 18px; }
+}
+
+@media (max-height: 640px) {
+  .invite-body { line-height: 1.76; }
+  .vtitle { margin-bottom: 10px; }
+  .scene { padding-left: 20px; padding-right: 20px; }
+  .btn { padding: 9px 13px; font-size: 12px; }
+  .invite-detail { margin-top: 11px; padding: 9px 0; }
+  .strip button { width: 64px; height: 85px; }
+  .outro { padding-top: 13vh; }
+}
