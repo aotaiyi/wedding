@@ -55,7 +55,7 @@ SHARE = {
 CHAPTERS = [
     {
         "no": "CHAPTER ONE",
-        "title": "缘起 · 中国",
+        "title": "开篇 · 中式",
         "sub": "一袭红妆，一诺千金。故事从这里开始。",
         # 这组是横构图棚拍，人物分居画面两侧，竖屏裁切会切掉一个人，
         # 所以用宣纸衬底 + 完整照片的方式呈现。
@@ -65,15 +65,15 @@ CHAPTERS = [
     },
     {
         "no": "CHAPTER TWO",
-        "title": "日常 · 德国",
-        "sub": "异乡的街道、河畔的黄昏，还有一只跟前跟后的柯基。",
+        "title": "日常 · 生活",
+        "sub": "异乡的街道、河畔的黄昏，还有我们的 Kolen。",
         "cover": "1.1",
         "focus": "50% 40%",
         "photos": ["1.1", "1.2", "1.3", "1.4"],
     },
     {
         "no": "CHAPTER THREE",
-        "title": "誓约 · 巴塞罗那",
+        "title": "此时 · 浪漫",
         "sub": "白墙、蓝窗、拱廊与海。我们在地中海边说好了余生。",
         "cover": "2.5",
         "focus": "52% 38%",
@@ -81,7 +81,7 @@ CHAPTERS = [
     },
     {
         "no": "CHAPTER FOUR",
-        "title": "漫游 · 老城",
+        "title": "回归 · 平凡",
         "sub": "脱下礼服，只是两个在旧街巷里贪玩的人。",
         "cover": "3.2",
         "focus": "50% 42%",
@@ -307,7 +307,6 @@ def main():
 {bg(OUTRO['img'], OUTRO['focus'], lq[OUTRO['img']]['lqip'])}
     <p class="word rise">敬候光临</p>
     <p class="who rise">{COUPLE['groom']}　{COUPLE['bride']}</p>
-    <p class="tiny rise">{WEDDING['date_dot']}　{WEDDING['venue']}</p>
   </section>
 """
     )

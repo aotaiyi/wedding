@@ -351,10 +351,13 @@ img {
   transform-origin: top;
 }
 
+/* 位移必须小于 .hint 的 bottom 留白（14px）：
+ * 被 transform 位移的元素会计入滚动溢出区，超出就会被 .scene 的
+ * overflow:hidden 齐根裁断 —— 而此刻它还有约 46% 不透明度，看得出来。 */
 @keyframes drop {
   0% { transform: scaleY(0); opacity: 0; }
   40% { transform: scaleY(1); opacity: 1; }
-  100% { transform: scaleY(1) translateY(26px); opacity: 0; }
+  100% { transform: scaleY(1) translateY(13px); opacity: 0; }
 }
 
 /* ── 宣纸场景（邀请函 / 婚礼信息）───────────────────── */
@@ -542,6 +545,7 @@ img {
 
 .chapter-title {
   font-family: var(--serif-cn);
+  text-wrap: balance;
   font-size: clamp(28px, 8.5vw, 40px);
   font-weight: 400;
   letter-spacing: 0.22em;
@@ -552,10 +556,15 @@ img {
 
 .chapter-sub {
   font-size: 13px;
-  letter-spacing: 0.16em;
-  text-indent: 0.16em;
+  /* 0.1em 而非 0.16em：收紧后副题刚好能排成一行，
+   * 既不出现孤字也不从词中间断开；窄屏真需要换行时由 text-wrap:balance 兜底。 */
+  letter-spacing: 0.1em;
+  text-indent: 0.1em;
   opacity: 0.88;
   max-width: 24em;
+  /* 均衡两行长度，避免末行只剩一个词（如「Kolen。」「余生。」孤悬）。
+   * 不支持的浏览器退回普通断行，无副作用。 */
+  text-wrap: balance;
 }
 
 .chapter-sub::before {
@@ -611,8 +620,13 @@ img {
   padding-bottom: 0;
 }
 
+/* 照片宽度同时受容器和视口高度约束。
+ * 这是张横构图（约 3:2），只按 width:100% 的话视口一宽它就等比变高 ——
+ * 1280px 宽时高达 822px，会把标题和缩略图整个顶出框线外。
+ * 66vh 上限保证它在任何视口下都只占约 44vh 高。 */
 .plate {
-  margin-bottom: 24px;
+  width: min(100%, 66vh);
+  margin: 0 auto 24px;
   padding: 7px;
   background: #fff;
   border: 1px solid rgba(28, 25, 23, 0.13);
@@ -756,14 +770,6 @@ img {
   letter-spacing: 0.28em;
   text-indent: 0.28em;
   opacity: 0.94;
-}
-
-.outro .tiny {
-  margin-top: 10px;
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  text-indent: 0.22em;
-  opacity: 0.66;
 }
 
 /* ── 音乐开关 ───────────────────────────────────────── */
