@@ -34,7 +34,8 @@ WEDDING = {
     "venue": "朔州市朔城区艺龙万国酒店 · 奥斯卡厅",
     "ceremony": "11:50",  # 开礼
     "banquet": "12:18",  # 开席
-    # 开喜门。地点与婚礼同址，页面上不再重复一遍场地名
+    # 开喜门。虽与婚礼同址，仍单列地点 —— 与回门宴对称，
+    # 让读者扫时间块时无需回头去正文找场地
     "ximen_time": "九月十一日 晚 19:00",
     # 回门宴在太原，与婚礼、喜门不同城，所以必须带上地点
     "huimen_time": "九月十三日 12:00",
@@ -234,10 +235,7 @@ def main():
         <strong>{WEDDING['date_cn']}</strong><br>
         {WEDDING['lunar']}　{WEDDING['weekday']}
       </p>
-      <p>
-        <strong>{WEDDING['hall']}</strong><br>
-        <strong>{WEDDING['room']}</strong>
-      </p>
+      <p><strong>{WEDDING['venue']}</strong></p>
       <p>
         为 <b>{COUPLE['groom']}</b> 先生<br>
         与 <b>{COUPLE['bride']}</b> 女士<br>
@@ -254,6 +252,7 @@ def main():
       <p class="row">
         <span class="lab">喜门</span><b>{WEDDING['ximen_time']}</b>
       </p>
+      <p class="row-sub">{WEDDING['venue']}</p>
       <p class="row">
         <span class="lab">回门宴</span><b>{WEDDING['huimen_time']}</b>
       </p>
