@@ -472,9 +472,9 @@ img {
 
 .invite-body {
   font-family: var(--serif-cn);
-  font-size: 14px;
+  font-size: 13px;
   font-size: clamp(13px, min(4.7vw, 2.25vh), 19px);
-  line-height: 2.15;
+  line-height: 1.98;
   text-align: center;
   color: #3a342e;
   max-width: 23em;
@@ -485,7 +485,7 @@ img {
  * 空行会占满一整个行高（19px × 2.2 ≈ 42px），三处段落就白吃掉 75px，
  * 这一屏本来就装不下。 */
 .invite-body p + p {
-  margin-top: 0.85em;
+  margin-top: 0.7em;
 }
 
 .invite-body .salute {
@@ -512,8 +512,8 @@ img {
 /* 开礼 / 开席 / 喜门：用上下两条朱砂细线圈成一块，和正文分开 */
 .invite-detail {
   max-width: 23em;
-  margin: 22px auto 0;
-  padding: 15px 0;
+  margin: 18px auto 0;
+  padding: 12px 0;
   border-top: 1px solid rgba(158, 43, 37, 0.2);
   border-bottom: 1px solid rgba(158, 43, 37, 0.2);
   font-family: var(--serif-cn);
@@ -527,7 +527,7 @@ img {
   flex-wrap: wrap;
   font-size: 15px;
   font-size: clamp(12.5px, min(4.3vw, 2vh), 17px);
-  line-height: 1.85;
+  line-height: 1.72;
   color: #3a342e;
 }
 
@@ -560,7 +560,9 @@ img {
   margin-top: 2px;
   font-size: 12px;
   font-size: clamp(11px, min(3.5vw, 1.6vh), 13.5px);
-  letter-spacing: 0.14em;
+  /* 0.08em 而非 0.14em：回门宴的场地行有 17 字，原字距下在 320px 屏上
+   * 只差 1px 就换行，真机换字体后必翻车。收紧后留出真实余量。 */
+  letter-spacing: 0.08em;
   color: var(--muted);
 }
 
@@ -1043,7 +1045,7 @@ img {
   /* 邀请函这一屏内容最多（正文 + 时间块 + 三个按钮），矮屏上必须压紧。
    * 真机是宋体，字体度量与测试环境的黑体不同，所以要留足余量而非刚好装下。 */
   .invite-body {
-    line-height: 1.88;
+    line-height: 1.68;
   }
   .invite-body p + p {
     margin-top: 0.8em;
@@ -1056,11 +1058,11 @@ img {
     margin-bottom: 14px;
   }
   .invite-detail {
-    margin-top: 12px;
-    padding: 9px 0;
+    margin-top: 11px;
+    padding: 8px 0;
   }
   .invite-detail .row {
-    line-height: 1.75;
+    line-height: 1.62;
   }
   .signature {
     margin-top: 14px;
@@ -1075,7 +1077,7 @@ img {
 }
 
 @media (max-height: 640px) {
-  .invite-body { line-height: 1.76; }
+  .invite-body { line-height: 1.68; }
   .vtitle { margin-bottom: 10px; }
   .scene { padding-left: 20px; padding-right: 20px; }
   .btn { padding: 9px 13px; font-size: 12px; }

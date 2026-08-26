@@ -36,6 +36,9 @@ WEDDING = {
     "banquet": "12:18",  # 开席
     # 开喜门。地点与婚礼同址，页面上不再重复一遍场地名
     "ximen_time": "九月十一日 晚 19:00",
+    # 回门宴在太原，与婚礼、喜门不同城，所以必须带上地点
+    "huimen_time": "九月十三日 12:00",
+    "huimen_place": "太原宴通天下 · 宴会厅（千峰南路店）",
     # 详细地址就是酒店名本身，与上方场地完全重复，所以不在页面上单独列一行，
     # 只用于「复制地址」按钮。若日后拿到具体街道门牌，填在这里就会自动显示出来。
     "address": "",
@@ -250,7 +253,11 @@ def main():
       </p>
       <p class="row">
         <span class="lab">喜门</span><b>{WEDDING['ximen_time']}</b>
-      </p>{addr_row}
+      </p>
+      <p class="row">
+        <span class="lab">回门宴</span><b>{WEDDING['huimen_time']}</b>
+      </p>
+      <p class="row-sub">{WEDDING['huimen_place']}</p>{addr_row}
     </div>
     <div class="actions rise">
       <a class="btn solid" href="{WEDDING['amap']}" target="_blank" rel="noopener">地图导航</a>
